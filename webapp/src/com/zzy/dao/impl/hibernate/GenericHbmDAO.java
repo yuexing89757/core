@@ -15,7 +15,9 @@ import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 
+import com.zzy.dao.dbshard.HibernateManagerShard;
 import com.zzy.dao.dbtool.HibernateManager;
+import com.zzy.enums.GetShardType;
 import com.zzy.util.LanguageKey;
 import com.zzy.util.Log;
 import com.zzy.util.Paging;
@@ -32,16 +34,38 @@ public abstract class GenericHbmDAO<T, ID extends Serializable>
 
 	private Class<T> persistentClass;
 	private Session session;
+	
+	private GetShardType shardType;  //shard专用
+	private Long adId;  //shard专用
 
 	public GenericHbmDAO() {
-		this.persistentClass = (Class<T>) ((ParameterizedType) getClass()
-				.getGenericSuperclass()).getActualTypeArguments()[0];
+		this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
 	}
+	
+	//shard专用
+	public GenericHbmDAO(Long adId, GetShardType shardType) {
+		this.persistentClass = (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+		this.adId = adId;
+		this.shardType = shardType;
+	}
+	
 
 	protected Session getSession() {
 		session = HibernateManager.openSession();
 		return session;
 	}
+	
+	protected synchronized Session getShardSession() {  //shard专用
+		if(GetShardType.ADVERTISER == this.shardType){
+			return HibernateManagerShard.getCurrentSessionByAdvertiserId(adId); 
+		}else {
+			return null;
+		}
+		
+	}
+
+	
+	
 
 	public Class<T> getPersistentClass() {
 		return persistentClass;

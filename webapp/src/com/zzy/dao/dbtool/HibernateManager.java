@@ -6,6 +6,7 @@ import org.hibernate.StatelessSession;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.stat.Statistics;
 
+@SuppressWarnings("unchecked")
 public class HibernateManager {
 	private static final String cfgPath = "/config/hibernate/hibernate.cfg.xml";
 	private static final SessionFactory sessionFactory;
@@ -13,7 +14,6 @@ public class HibernateManager {
 
 	static {
 		try {
-			//sessionFactory = HibernateUtil.getFactory();
 			sessionFactory = new Configuration().configure(cfgPath).buildSessionFactory();
 		} catch (Throwable ex) {
 			throw new ExceptionInInitializerError(ex);
@@ -62,5 +62,7 @@ public class HibernateManager {
 	public static synchronized StatelessSession openStatelessSession() {
 		return sessionFactory.openStatelessSession();
 	}
+
+
 
 }

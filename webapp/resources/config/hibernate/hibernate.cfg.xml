@@ -37,5 +37,6 @@
 		<mapping resource="config/hbm/EmailTask.hbm.xml" />
 		<mapping resource="config/hbm/Product.hbm.xml" />
 		<mapping resource="config/hbm/News.hbm.xml" />
+		<mapping resource="config/hbm/ShardInfo.hbm.xml" />
 	</session-factory>
 </hibernate-configuration>

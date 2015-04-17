@@ -23,18 +23,19 @@ public class HibernateShardSessionFactory {
 	
 	
 	public  SessionFactory getSessionFactoryByAdvertiser(Long adId){
-		if(adId.equals(-1L)){
+		if(!adId.equals(-1L)){
 			sessionFactory = new Configuration().configure(cfgPath).buildSessionFactory();
 		}else{
 			ShardInfoDao shardInfoDao=new ShardInfoDaoImpl();
 			ShardInfo shardInfo=shardInfoDao.findByAdId(adId);
-			newSessionFactory(shardInfo);
+			sessionFactory=newSessionFactory(shardInfo);
 		}
 		return sessionFactory;
 	}
 		
 	private SessionFactory newSessionFactory(ShardInfo shardInfo) {
 		String url = MessageFormat.format(__URL, shardInfo.getIp(), shardInfo.getPort(), shardInfo.getDbname());
+		configuration=new Configuration();
 		configuration.setProperty(__CONNECTION, url);
 		configuration.setProperty(__USERNAME, shardInfo.getUser());
 		configuration.setProperty(__PASSWORD, shardInfo.getPwd());
